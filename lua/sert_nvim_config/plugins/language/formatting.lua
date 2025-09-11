@@ -14,6 +14,7 @@ return {
         css = { "prettier" },
         html = { "prettier" },
         json = { "prettier" },
+        jsonc = { "prettier" },
         yaml = { "prettier" },
         markdown = { "prettier" },
         graphql = { "prettier" },
@@ -21,6 +22,8 @@ return {
         lua = { "stylua" },
         python = { "isort", "black" },
         rust = { "rustfmt", "dioxus", lsp_format = "fallback" },
+        tex = { "llf" },
+        bib = { "bibtex-tidy" },
         cargo = { "clippy" },
       },
       format_on_save = {

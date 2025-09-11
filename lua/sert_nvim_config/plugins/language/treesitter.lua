@@ -46,6 +46,7 @@ return {
         "c",
         "kotlin",
         "rust",
+        "latex",
       },
       incremental_selection = {
         enable = true,

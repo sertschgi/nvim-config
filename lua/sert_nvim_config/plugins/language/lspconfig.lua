@@ -130,6 +130,94 @@ return {
       },
     });
 
+    lspconfig.ltex_plus.setup {
+      settings = {
+        ltex = {
+          diagnosticSeverity = "warning",
+          checkFrequency = "onSave",
+          additionalRules = {
+            enablePickyRules = true,
+          },
+          dictionary = {},
+        }
+      },
+      on_attach = function(client, bufnr)
+        local job_var = "latexmk_job_id"
+
+        vim.api.nvim_create_autocmd("BufWritePost", {
+          buffer = bufnr,
+          callback = function()
+            local fname = vim.api.nvim_buf_get_name(bufnr)
+            if fname == "" then return end
+            local cwd = vim.fn.fnamemodify(fname, ":p:h")
+            local basename = vim.fn.fnamemodify(fname, ":t")
+
+            local function subtle(msg)
+              vim.notify(msg, vim.log.levels.INFO, { timeout = 1200 })
+            end
+
+            -- stop previous job if still running
+            local prev = vim.b[bufnr][job_var]
+            if prev and vim.fn.jobwait({ prev }, 0)[1] == -1 then
+              pcall(vim.fn.jobstop, prev)
+              vim.b[bufnr][job_var] = nil
+            end
+
+            local stdout, stderr = {}, {}
+            local jid = vim.fn.jobstart({
+              "latexmk", "-pdf", "-interaction=nonstopmode", "-synctex=1", basename
+            }, {
+              cwd = cwd,
+              stdout_buffered = true,
+              stderr_buffered = true,
+              on_stdout = function(_, data)
+                if data then
+                  for _, line in ipairs(data) do if line ~= "" then table.insert(stdout, line) end end
+                end
+              end,
+              on_stderr = function(_, data)
+                if data then
+                  for _, line in ipairs(data) do if line ~= "" then table.insert(stderr, line) end end
+                end
+              end,
+              on_exit = function(_, code)
+                -- schedule UI work to avoid doing it in job thread
+                vim.schedule(function()
+                  vim.b[bufnr][job_var] = nil
+                  if code == 0 then
+                    subtle("latexmk: build succeeded")
+                  else
+                    subtle("latexmk: build failed (see :LatexmkOutput)")
+                    -- create/read output buffer
+                    local out = { "=== latexmk stdout ===" }
+                    vim.list_extend(out, stdout)
+                    vim.list_extend(out, { "", "=== latexmk stderr ===" })
+                    vim.list_extend(out, stderr)
+                    local outbuf = vim.api.nvim_create_buf(false, true)
+                    vim.api.nvim_buf_set_lines(outbuf, 0, -1, false, out)
+                    vim.api.nvim_buf_set_option(outbuf, "filetype", "log")
+                    vim.api.nvim_buf_set_option(outbuf, "bufhidden", "wipe")
+                    -- store buffer id and command to open it
+                    vim.b[bufnr].latexmk_output_buf = outbuf
+                    -- create a buffer-local command to open the log (idempotent)
+                    pcall(vim.api.nvim_buf_create_user_command, bufnr, "LatexmkOutput", function()
+                      if vim.api.nvim_buf_is_valid(outbuf) then vim.api.nvim_set_current_buf(outbuf) end
+                    end, { desc = "Show latexmk output" })
+                  end
+                end)
+              end,
+            })
+
+            if jid and jid > 0 then
+              vim.b[bufnr][job_var] = jid
+            else
+              subtle("latexmk: failed to start")
+            end
+          end,
+          desc = "Autocompile LaTeX with latexmk on save (ltex attach, subtle notify)",
+        })
+      end, }
+
     lspconfig.lua_ls.setup({
       settings = {
         Lua = {
