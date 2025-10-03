@@ -10,12 +10,13 @@ opt.shiftwidth = 2    -- 2 spaces for indent width
 opt.expandtab = true  -- expand tab to spaces
 opt.autoindent = true -- copy indent from current line when starting new one
 
--- line wrapping
-opt.wrap = true
 
 -- search settings
 opt.ignorecase = true -- ignore case when searching
 opt.smartcase = true  -- if you include mixed case in your search, assumes you want case-sensitive
+
+opt.guicursor =
+"n-v-c-sm:block,i-ci-ve:ver25-blinkon500-blinkoff500,r-cr-o:hor20,t:block-blinkon500-blinkoff500-TermCursor"
 
 -- cursor line
 opt.cursorline = true -- highlight the current cursor line
@@ -40,16 +41,5 @@ opt.splitbelow = true -- split horizontal window to the bottom
 
 -- turn off swapfile
 opt.swapfile = false
-
-opt.tw = 80
-
--- Configure formatoptions to auto-wrap with 't' and allow formatting with 'c', 'q', 'r', 'n'
-vim.opt.formatoptions:append({
-  t = true, -- Auto-wrap text using 'textwidth'
-  c = true, -- Auto-wrap comments using 'textwidth'
-  q = true, -- Allow formatting of comments with 'gq'
-  r = true, -- Continue comments after hitting <Enter>
-  n = true, -- Recognize numbered lists for formatting
-})
 
 opt.fillchars = { eob = " " }
