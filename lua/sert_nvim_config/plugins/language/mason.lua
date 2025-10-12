@@ -28,6 +28,8 @@ return {
         "sqlls",
         "kotlin_language_server",
         "ltex_plus",
+        "arduino_language_server",
+        "clangd",
       },
     })
 
@@ -41,6 +43,7 @@ return {
         "pylint",
         "tree-sitter-cli",
         "bibtex-tidy",
+        "clang-format",
       },
     })
   end,

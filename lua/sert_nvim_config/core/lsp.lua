@@ -48,7 +48,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     opts.desc = "Restart LSP"
     keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
 
-    keymap.set("n", "<leader>lme", "<cmd>ExpandMacro<CR>", { desc = "Expand rust macro under cursor" })
+    keymap.set("n", "<leader>lme", ":MacroExpand<CR>", { desc = "Expand rust macro under cursor" })
   end,
 })
 
@@ -70,11 +70,10 @@ vim.lsp.config('*', {
 });
 
 vim.lsp.config('rust_analyzer', {
-  commands = {
-    ExpandMacro = {
-      function()
+  on_attach = function(client, bufnr)
+    vim.api.nvim_create_user_command("MacroExpand", function()
         vim.lsp.buf_request_all(
-          0,
+          bufnr,
           "rust-analyzer/expandMacro",
           vim.lsp.util.make_position_params(),
           function(results)
@@ -117,8 +116,9 @@ vim.lsp.config('rust_analyzer', {
           end
         )
       end,
-    },
-  },
+      { desc = 'expands macro under cursor' }
+    )
+  end
 });
 
 vim.lsp.config('ltex_plus', {

@@ -31,6 +31,7 @@ return {
       ['<C-p>'] = false,
       ['<C-k>'] = { 'select_prev', 'fallback' },
       ['<C-j>'] = { 'select_next', 'fallback' },
+      ['<C-l>'] = { 'select_and_accept', 'fallback' },
     },
 
     appearance = {

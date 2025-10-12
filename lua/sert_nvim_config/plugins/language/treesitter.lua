@@ -35,7 +35,6 @@ return {
         "markdown",
         "markdown_inline",
         "svelte",
-        "graphql",
         "bash",
         "lua",
         "vim",
@@ -47,6 +46,8 @@ return {
         "kotlin",
         "rust",
         "latex",
+        "arduino",
+        "nu",
       },
       incremental_selection = {
         enable = true,
