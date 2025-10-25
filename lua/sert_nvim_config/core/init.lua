@@ -22,3 +22,17 @@ vim.api.nvim_create_autocmd({ "ExitPre" }, {
       "margin=default" }, { detach = true })
   end,
 })
+
+
+-- spacing
+-- show an empty winbar for all normal windows
+vim.api.nvim_create_autocmd({ 'WinEnter', 'BufWinEnter', 'VimResized' }, {
+  callback = function()
+    if vim.bo.buftype == '' then
+      vim.o.winbar = ' ' -- a single space renders the line
+    end
+  end,
+})
+
+
+

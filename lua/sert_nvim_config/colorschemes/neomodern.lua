@@ -9,28 +9,28 @@ return {
       -- Can be one of: 'iceclimber' | 'gyokuro' | 'hojicha' | 'roseprime'
       theme = "gyokuro",
       -- Can be one of: 'light' | 'dark', or set via vim.o.background
-      -- variant = "dark",
+      -- variant = "light",
       -- Use an alternate, darker bg
-      alt_bg = true,
-      -- If true, docstrings will be highlighted like strings, otherwise they will be
-      -- highlighted like comments. Note, behavior is dependent on the language server.
-      colored_docstrings = true,
-      -- If true, highlights the {sign,fold} column the same as cursorline
-      cursorline_gutter = true,
-      -- If true, highlights the gutter darker than the bg
-      -- dark_gutter = true,
-      -- if true favor treesitter highlights over semantic highlights
-      favor_treesitter_hl = true,
-      -- Don't set background of floating windows. Recommended for when using floating
-      -- windows with borders.
+      -- alt_bg = true,
+      -- -- If true, docstrings will be highlighted like strings, otherwise they will be
+      -- -- highlighted like comments. Note, behavior is dependent on the language server.
+      -- colored_docstrings = true,
+      -- -- If true, highlights the {sign,fold} column the same as cursorline
+      -- -- cursorline_gutter = true,
+      -- -- If true, highlights the gutter darker than the bg
+      -- -- dark_gutter = true,
+      -- -- if true favor treesitter highlights over semantic highlights
+      favor_treesitter_hl = false,
+      -- -- Don't set background of floating windows. Recommended for when using floating
+      -- -- windows with borders.
       plain_float = true,
-      -- Show the end-of-buffer character
-      show_eob = true,
-      -- If true, enable the vim terminal colors
+      -- -- Show the end-of-buffer character
+      -- -- show_eob = true,
+      -- -- If true, enable the vim terminal colors
       -- term_colors = true,
-      -- Keymap (in normal mode) to toggle between light and dark variants.
-      toggle_variant_key = nil,
-      -- Don't set background
+      -- -- Keymap (in normal mode) to toggle between light and dark variants.
+      -- toggle_variant_key = nil,
+      -- -- Don't set background
       transparent = true,
 
       -----DIAGNOSTICS and CODE STYLE-----
@@ -57,22 +57,21 @@ return {
       -----PLUGINS-----
       --
       -- The following options allow for more control over some plugin appearances.
-      plugin = {
-        lualine = {
-          -- Bold lualine_a sections
-          bold = true,
-          -- Don't set section/component backgrounds. Recommended to not set
-          -- section/component separators.
-          plain = false,
-        },
-        cmp = { -- works for nvim.cmp and blink.nvim
-          -- Don't highlight lsp-kind items. Only the current selection will be highlighted.
-          plain = false,
-          -- Reverse lsp-kind items' highlights in blink/cmp menu.
-          reverse = false,
-        },
-
-      },
+      -- plugin = {
+      --   lualine = {
+      --     -- Bold lualine_a sections
+      --     bold = true,
+      --     -- Don't set section/component backgrounds. Recommended to not set
+      --     -- section/component separators.
+      --     plain = false,
+      --   },
+      --   cmp = { -- works for nvim.cmp and blink.nvim
+      --     -- Don't highlight lsp-kind items. Only the current selection will be highlighted.
+      --     plain = false,
+      --     -- Reverse lsp-kind items' highlights in blink/cmp menu.
+      --     reverse = false,
+      --   },
+      -- },
 
       -- CUSTOM HIGHLIGHTS --
       --
@@ -81,8 +80,10 @@ return {
         -- -- asdf = "asdf",
         -- -- -- asdf = "#ffffff",
         -- bg = "#ffffff",
-        -- alt_bg = "#ffffff" -- for gutter
+        -- alt_bg = none -- for gutter
       },
+
+
       -- Override highlight groups
       highlights = {
       },
@@ -90,5 +91,7 @@ return {
     -- Convenience function that simply calls `:colorscheme <theme>` with the theme
     -- specified in your config.
     require("neomodern").load()
+
+    vim.api.nvim_set_hl(0, 'WinBar', { fg = none, bg = none, ctermbg = none, ctermfg = none })
   end,
 }
