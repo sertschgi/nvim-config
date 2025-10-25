@@ -9,25 +9,25 @@ return {
       -- Can be one of: 'iceclimber' | 'gyokuro' | 'hojicha' | 'roseprime'
       theme = "gyokuro",
       -- Can be one of: 'light' | 'dark', or set via vim.o.background
-      variant = "dark",
+      -- variant = "dark",
       -- Use an alternate, darker bg
-      alt_bg = false,
+      alt_bg = true,
       -- If true, docstrings will be highlighted like strings, otherwise they will be
       -- highlighted like comments. Note, behavior is dependent on the language server.
       colored_docstrings = true,
       -- If true, highlights the {sign,fold} column the same as cursorline
       cursorline_gutter = true,
       -- If true, highlights the gutter darker than the bg
-      dark_gutter = false,
+      -- dark_gutter = true,
       -- if true favor treesitter highlights over semantic highlights
-      favor_treesitter_hl = false,
+      favor_treesitter_hl = true,
       -- Don't set background of floating windows. Recommended for when using floating
       -- windows with borders.
-      plain_float = false,
+      plain_float = true,
       -- Show the end-of-buffer character
       show_eob = true,
       -- If true, enable the vim terminal colors
-      term_colors = true,
+      -- term_colors = true,
       -- Keymap (in normal mode) to toggle between light and dark variants.
       toggle_variant_key = nil,
       -- Don't set background
@@ -35,11 +35,11 @@ return {
 
       -----DIAGNOSTICS and CODE STYLE-----
       --
-      diagnostics = {
-        darker = true,     -- Darker colors for diagnostic
-        undercurl = true,  -- Use undercurl for diagnostics
-        background = true, -- Use background color for virtual text
-      },
+      -- diagnostics = {
+      --   darker = true,     -- Darker colors for diagnostic
+      --   undercurl = true,  -- Use undercurl for diagnostics
+      --   background = true, -- Use background color for virtual text
+      -- },
       -- The following table accepts values the same as the `gui` option for normal
       -- highlights. For example, `bold`, `italic`, `underline`, `none`.
       code_style = {
@@ -71,14 +71,21 @@ return {
           -- Reverse lsp-kind items' highlights in blink/cmp menu.
           reverse = false,
         },
+
       },
 
       -- CUSTOM HIGHLIGHTS --
       --
       -- Override default colors
-      colors = {},
+      colors = {
+        -- -- asdf = "asdf",
+        -- -- -- asdf = "#ffffff",
+        -- bg = "#ffffff",
+        -- alt_bg = "#ffffff" -- for gutter
+      },
       -- Override highlight groups
-      highlights = {},
+      highlights = {
+      },
     })
     -- Convenience function that simply calls `:colorscheme <theme>` with the theme
     -- specified in your config.
