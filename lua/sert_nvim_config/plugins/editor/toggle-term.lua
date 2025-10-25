@@ -34,9 +34,9 @@ return {
     {
       "<leader>ett",
       function()
-        require("toggleterm").toggle()
+        require("toggleterm").toggle(0, 80)
       end,
       desc = "open terminal in new tab"
-    }
+    },
   }
 }
