@@ -72,7 +72,7 @@ return {
 
       components = {
         {
-          text = '◢',
+          text = function(buffer) return buffer.is_first and '' or '◥' end,
           fg = get_focus,
           bg = "#222324"
         },
@@ -95,7 +95,7 @@ return {
           italic = function(buffer) return not buffer.is_focused end,
         },
         {
-          text = '',
+          text = '◣',
           fg = get_focus,
           bg = "#222324"
         },

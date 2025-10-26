@@ -1,235 +1,130 @@
 return {
-  "windwp/windline.nvim",
-  lazy = false,
+  'nvim-lualine/lualine.nvim',
+  dependencies = { 'nvim-tree/nvim-web-devicons' },
   init = function()
-    local windline = require('windline')
-    local b_components = require('windline.components.basic')
-    local vim_components = require('windline.components.vim')
-    local git_rev_components = require('windline.components.git_rev')
-
-    local state = _G.WindLine.state
-    local utils = require('windline.utils')
-
-    local lsp_comps = require('windline.components.lsp')
-    local git_comps = require('windline.components.git')
-
-    local hl_list = {
-      Inactive = { 'InactiveFg', 'InactiveBg' },
-      Active = { 'ActiveFg', 'ActiveBg' },
-      default = { 'StatusFg', 'StatusBg' },
-    }
-    local basic = {}
-
-    local medium_width = 100
-    local large_width = 140
-    basic.divider = { b_components.divider, '' }
-
-    -- stylua: ignore
-    utils.change_mode_name({
-      ['n']   = { ' -- Normal -- ', 'Normal' },
-      ['no']  = { ' -- Visual -- ', 'Visual' },
-      ['nov'] = { ' -- Visual -- ', 'Visual' },
-      ['noV'] = { ' -- Visual -- ', 'Visual' },
-      ['no'] = { ' -- Visual -- ', 'Visual' },
-      ['niI'] = { ' -- Normal -- ', 'Normal' },
-      ['niR'] = { ' -- Normal -- ', 'Normal' },
-      ['niV'] = { ' -- Normal -- ', 'Normal' },
-      ['v']   = { ' -- Visual -- ', 'Visual' },
-      ['V']   = { ' -- Visual -- ', 'Visual' },
-      ['']   = { ' -- Visual -- ', 'Visual' },
-      ['s']   = { ' -- Visual -- ', 'Visual' },
-      ['S']   = { ' -- Visual -- ', 'Visual' },
-      ['']   = { ' -- Visual -- ', 'Visual' },
-      ['i']   = { ' -- Insert -- ', 'Insert' },
-      ['ic']  = { ' -- Insert -- ', 'Insert' },
-      ['ix']  = { ' -- Insert -- ', 'Insert' },
-      ['R']   = { ' -- Replace -- ', 'Replace' },
-      ['Rc']  = { ' -- Replace -- ', 'Replace' },
-      ['Rv']  = { ' -- Normal -- ', 'Normal' },
-      ['Rx']  = { ' -- Normal -- ', 'Normal' },
-      ['c']   = { ' -- Commmand -- ', 'Command' },
-      ['cv']  = { ' -- Commmand -- ', 'Command' },
-      ['ce']  = { ' -- Commmand -- ', 'Command' },
-      ['r']   = { ' -- Replace -- ', 'Replace' },
-      ['rm']  = { ' -- Normal -- ', 'Normal' },
-      ['r?']  = { ' -- Normal -- ', 'Normal' },
-      ['!']   = { ' -- Normal -- ', 'Normal' },
-      ['t']   = { ' -- Normal -- ', 'Command' },
-      ['nt']  = { ' -- Terminal -- ', 'Command' },
-    })
-
-    basic.vi_mode = {
-      name = 'vi_mode',
-      hl_colors = hl_list.default,
-      text = function()
-        return state.mode[1]
-      end,
+    local colors = {
+      red = '#ca1243',
+      grey = '#3E3F42',
+      black = '#222324',
+      white = '#ffffff',
+      light_green = '#83a598',
+      orange = '#fe8019',
+      green = '#8ec07c',
     }
 
-    basic.lsp_diagnos = {
-      name = 'diagnostic',
-      hl_colors = hl_list.default,
-      width = large_width,
-      text = function(bufnr)
-        if lsp_comps.check_lsp(bufnr) then
-          -- stylua: ignore
-          return {
-            { lsp_comps.lsp_error({ format = '  %s', show_zero = true }), '' },
-            { lsp_comps.lsp_warning({ format = '  %s', show_zero = true }), '' },
-          }
+    local theme = {
+      normal = {
+        a = { fg = colors.white, bg = colors.black },
+        b = { fg = colors.white, bg = colors.grey },
+        c = { fg = colors.black, bg = colors.black },
+        z = { fg = colors.white, bg = colors.black },
+      },
+      insert = { a = { fg = colors.black, bg = colors.light_green } },
+      visual = { a = { fg = colors.black, bg = colors.orange } },
+      replace = { a = { fg = colors.black, bg = colors.green } },
+    }
+
+    local empty = require('lualine.component'):extend()
+    function empty:draw(default_highlight)
+      self.status = ''
+      self.applied_separator = ''
+      self:apply_highlights(default_highlight)
+      self:apply_section_separators()
+      return self.status
+    end
+
+    -- Put proper separators and gaps between components in sections
+    local function process_sections(sections)
+      for name, section in pairs(sections) do
+        local left = name:sub(9, 10) < 'x'
+        for pos = 1, name ~= 'lualine_z' and #section or #section - 1 do
+          table.insert(section, pos * 2, { empty, color = { fg = colors.white, bg = colors.black } })
         end
-        return ''
-      end,
-    }
-
-    basic.file = {
-      name = 'file_name',
-      text = function()
-        return {
-          { b_components.cache_file_name('', 'unique'), '' },
-          { b_components.file_modified(' ') },
-        }
-      end,
-    }
-
-    local line_col = function()
-      local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-      return string.format(' Ln %3s, Col %-2s ', row, col + 1)
-    end
-
-    local spaces = function()
-      return 'Spaces: ' .. vim.api.nvim_buf_get_option(0, 'shiftwidth') .. ' '
-    end
-
-    local line_format = function()
-      local format_icons = {
-        unix = 'LF',
-        dos = 'CRLF',
-        mac = 'LF',
-      }
-      return function()
-        return format_icons[vim.bo.fileformat] or vim.bo.fileformat
+        for id, comp in ipairs(section) do
+          if type(comp) ~= 'table' then
+            comp = { comp }
+            section[id] = comp
+          end
+          comp.separator = left and { right = '' } or { left = '' }
+        end
       end
+      return sections
     end
 
-    basic.line_col_right = {
-      hl_colors = hl_list.default,
-      text = function(_, _, width)
-        if
-            vim.api.nvim_buf_get_option(0, 'filetype') == ''
-            and vim.fn.wordcount().bytes < 1
-        then
-          return ''
-        end
-        if width > medium_width then
-          return {
-            { line_col },
-            { spaces },
-            { b_components.file_encoding() },
-            { ' ' },
-            { line_format() },
-            { ' ' },
-          }
-        end
-        return {
-          { line_col, '' },
-        }
-      end,
-    }
-
-    basic.lsp_name = {
-      width = medium_width,
-      name = 'lsp_name',
-      text = function(bufnr)
-        if lsp_comps.check_lsp(bufnr) then
-          return {
-            { lsp_comps.lsp_name() },
-          }
-        end
-        return {
-          { b_components.cache_file_type({ icon = true, default = '' }) },
-        }
-      end,
-    }
-
-    basic.git_branch = {
-      name = 'git_branch',
-      hl_colors = hl_list.default,
-      width = medium_width,
-      text = function(bufnr)
-        if git_comps.is_git(bufnr) then
-          return {
-            { git_comps.git_branch(), hl_list.default, large_width },
-            {
-              git_rev_components.git_rev(),
-              hl_list.default,
-              large_width,
-            },
-          }
-        end
+    local function search_result()
+      if vim.v.hlsearch == 0 then
         return ''
-      end,
-    }
+      end
+      local last_search = vim.fn.getreg('/')
+      if not last_search or last_search == '' then
+        return ''
+      end
+      local searchcount = vim.fn.searchcount { maxcount = 9999 }
+      return last_search .. '(' .. searchcount.current .. '/' .. searchcount.total .. ')'
+    end
 
-    local explorer = {
-      filetypes = { 'fern', 'NvimTree', 'lir' },
-      active = {
-        { '  ', hl_list.Inactive },
-        { b_components.divider },
-        { b_components.file_name('') },
-      },
-      always_active = true,
-      show_last_status = true,
-    }
+    local function modified()
+      if vim.bo.modified then
+        return '+'
+      elseif vim.bo.modifiable == false or vim.bo.readonly == true then
+        return '-'
+      end
+      return ''
+    end
 
-    local default = {
-      filetypes = { 'default' },
-      active = {
-        basic.git_branch,
-        basic.lsp_diagnos,
-        basic.vi_mode,
-        { vim_components.search_count() },
-        basic.divider,
-        { ' ' },
-        basic.file,
-        basic.line_col_right,
-        { ' ' },
-        basic.lsp_name,
+    require('lualine').setup {
+      options = {
+        theme = theme,
+        component_separators = '',
+        section_separators = { left = '', right = '' },
       },
-      inactive = {
-        { b_components.full_file_name, hl_list.Inactive },
-        basic.file_name_inactive,
-        basic.divider,
-        basic.divider,
-        { b_components.line_col,       hl_list.Inactive },
-        { b_components.progress,       hl_list.Inactive },
-      },
-    }
-
-    local M = {}
-    M.setup = function()
-      windline.setup({
-        colors_name = function(colors)
-          colors.StatusFg = colors.ActiveFg
-          colors.StatusBg = colors.ActiveBg
-          return colors
-        end,
-        statuslines = {
-          default,
-          explorer,
+      sections = process_sections {
+        lualine_a = { 'mode' },
+        lualine_b = {
+          'branch',
+          'diff',
+          {
+            'diagnostics',
+            source = { 'nvim' },
+            sections = { 'error' },
+            diagnostics_color = { error = { bg = colors.red, fg = colors.white } },
+          },
+          {
+            'diagnostics',
+            source = { 'nvim' },
+            sections = { 'warn' },
+            diagnostics_color = { warn = { bg = colors.orange, fg = colors.white } },
+          },
+          { 'filename', file_status = false,        path = 1 },
+          { modified,   color = { bg = colors.red } },
+          {
+            '%w',
+            cond = function()
+              return vim.wo.previewwindow
+            end,
+          },
+          {
+            '%r',
+            cond = function()
+              return vim.bo.readonly
+            end,
+          },
+          {
+            '%q',
+            cond = function()
+              return vim.bo.buftype == 'quickfix'
+            end,
+          },
         },
-      })
-    end
-
-    M.setup()
-
-    M.change_color = function(bgcolor, fgcolor)
-      local colors = windline.get_colors()
-      colors.StatusFg = fgcolor or colors.StatusFg
-      colors.StatusBg = bgcolor or colors.StatusBg
-      windline.on_colorscheme(colors)
-    end
-
-    return M
+        lualine_c = {},
+        lualine_x = {},
+        lualine_y = { search_result, 'filetype' },
+        lualine_z = { '%l:%c', '%p%%/%L' },
+      },
+      inactive_sections = {
+        lualine_c = { '%f %y %m' },
+        lualine_x = {},
+      },
+    }
   end,
 }
