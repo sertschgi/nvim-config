@@ -92,6 +92,8 @@ return {
     -- specified in your config.
     require("neomodern").load()
 
-    vim.api.nvim_set_hl(0, 'WinBar', { fg = none, bg = none, ctermbg = none, ctermfg = none })
+    -- for the spacer
+    vim.api.nvim_set_hl(0, 'WinBar', { fg = none, bg = none, sg = none, ctermbg = none, ctermfg = none })
+    vim.api.nvim_set_hl(0, 'WinBarNc', { fg = none, bg = none, sg = none, ctermbg = none, ctermfg = none })
   end,
 }
