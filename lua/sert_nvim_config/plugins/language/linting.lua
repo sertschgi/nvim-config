@@ -7,8 +7,8 @@ return {
     lint.linters_by_ft = {
       c = { "clangtidy" },
       cpp = { "clangtidy" },
-      rust = { "clippy" },
-      cargo = { "clippy" },
+      -- rust = { "clippy" },
+      -- cargo = { "clippy" },
       kotlin = { "ktlint" },
       javascript = { "eslint_d" },
       typescript = { "eslint_d" },
@@ -16,7 +16,8 @@ return {
       html = { "htmlhint" },
       css = { "stylelint" },
       docker = { "hadolint" },
-      lua = { "luacheck" }
+      lua = { "luacheck" },
+      yaml = { "yamllint" }
     }
 
     local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })

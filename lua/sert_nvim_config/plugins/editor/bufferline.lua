@@ -53,7 +53,7 @@ return {
     function get_focus(buffer)
       if buffer.is_focused
       then
-        return blend(get_hex('Keyword', 'fg'), 0.75, "#000000")
+        return blend(buffer.devicon.color, 0.30, "#000000")
       else
         return blend(get_hex('Comment', 'fg'), 0.4, "#000000")
       end
@@ -65,7 +65,7 @@ return {
           return
               buffer.is_focused
               and get_hex('Normal', 'fg')
-              or blend(get_hex('Normal', 'fg'), 0.6, "#000000")
+              or blend(get_hex('Normal', 'fg'), 0.7, "#000000")
         end,
         bg = get_focus,
       },
@@ -82,7 +82,10 @@ return {
         },
         {
           text = function(buffer) return buffer.devicon.icon end,
-          fg = function(buffer) return buffer.devicon.color end,
+          fg = function(buffer)
+            return buffer.is_focused and buffer.devicon.color or
+                blend(get_hex('Normal', 'fg'), 0.7, "#000000")
+          end,
         },
         {
           text = function(buffer) return buffer.unique_prefix end,

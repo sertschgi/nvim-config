@@ -48,6 +48,7 @@ return {
         "latex",
         "arduino",
         "nu",
+        "yuck"
       },
       incremental_selection = {
         enable = true,
