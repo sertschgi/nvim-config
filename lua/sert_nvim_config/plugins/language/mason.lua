@@ -29,6 +29,7 @@ return {
         "kotlin_language_server",
         "ltex_plus",
         "arduino_language_server",
+        "jdtls",
         "clangd",
       },
     })

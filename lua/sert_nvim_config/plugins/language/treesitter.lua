@@ -44,10 +44,12 @@ return {
         "vimdoc",
         "c",
         "kotlin",
+        "zig",
         "rust",
         "latex",
         "arduino",
         "nu",
+        "java",
         "yuck"
       },
       incremental_selection = {

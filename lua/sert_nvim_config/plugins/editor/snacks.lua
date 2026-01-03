@@ -4,26 +4,46 @@ return {
   lazy = false,
   ---@type snacks.Config
   opts = {
+    animate = { enabled = true },
     bigfile = { enabled = true },
+    bufdelete = { enabled = true },
     dashboard = { enabled = true },
+    debug = { enabled = true },
+    dim = { enabled = false },
     explorer = { enabled = false },
+    gh = { enabled = false },
+    git = { enabled = true },
+    gitbrowse = { enabled = false },
+    image = { enabled = true },
     indent = { enabled = true },
     input = { enabled = true },
+    keymap = { enabled = false },
+    layout = { enabled = false },
+    lazygit = { enabled = false },
     notifier = {
       enabled = true,
       timeout = 3000,
     },
-    picker = { enabled = true },
-    quickfile = { enabled = true },
-    scope = { enabled = true },
-    scroll = { enabled = true },
-    statuscolumn = { enabled = true },
-    words = { enabled = true },
-    styles = {
-      notification = {
-        -- wo = { wrap = true } -- Wrap notifications
+    notify = { enabled = true },
+    picker = {
+      enabled = true,
+      matcher = {
+        frecency = true,
       }
-    }
+    },
+    profiler = { enabled = false },
+    quickfile = { enabled = true },
+    rename = { enabled = true },
+    scope = { enabled = false },
+    scratch = { enabled = false },
+    scroll = { enabled = false },
+    statuscolumn = { enabled = false },
+    terminal = { enabled = false },
+    toggle = { enabled = true },
+    util = { enabled = true },
+    win = { enabled = true },
+    words = { enabled = true },
+    zen = { enabled = false },
   },
   keys = {
     -- Top Pickers & Explorer
@@ -32,14 +52,6 @@ return {
     { "<leader>/",       function() Snacks.picker.grep() end,                  desc = "Grep" },
     { "<leader>:",       function() Snacks.picker.command_history() end,       desc = "Command History" },
     { "<leader>n",       function() Snacks.picker.notifications() end,         desc = "Notification History" },
-    -- { "<leader>e",       function() Snacks.explorer() end,                                       desc = "File Explorer" },
-    -- find
-    -- { "<leader>fb",      function() Snacks.picker.buffers() end,                                 desc = "Buffers" },
-    -- { "<leader>fc",      function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
-    { "<leader>ff",      function() Snacks.picker.files() end,                 desc = "Find Files" },
-    { "<leader>fg",      function() Snacks.picker.git_files() end,             desc = "Find Git Files" },
-    { "<leader>fp",      function() Snacks.picker.projects() end,              desc = "Projects" },
-    { "<leader>fr",      function() Snacks.picker.recent() end,                desc = "Recent" },
     -- git
     { "<leader>gb",      function() Snacks.picker.git_branches() end,          desc = "Git Branches" },
     { "<leader>gl",      function() Snacks.picker.git_log() end,               desc = "Git Log" },
@@ -48,11 +60,6 @@ return {
     { "<leader>gS",      function() Snacks.picker.git_stash() end,             desc = "Git Stash" },
     { "<leader>gd",      function() Snacks.picker.git_diff() end,              desc = "Git Diff (Hunks)" },
     { "<leader>gf",      function() Snacks.picker.git_log_file() end,          desc = "Git Log File" },
-    -- Grep
-    { "<leader>sb",      function() Snacks.picker.lines() end,                 desc = "Buffer Lines" },
-    { "<leader>sB",      function() Snacks.picker.grep_buffers() end,          desc = "Grep Open Buffers" },
-    { "<leader>sg",      function() Snacks.picker.grep() end,                  desc = "Grep" },
-    { "<leader>sw",      function() Snacks.picker.grep_word() end,             desc = "Visual selection or word", mode = { "n", "x" } },
     -- search
     { '<leader>s"',      function() Snacks.picker.registers() end,             desc = "Registers" },
     { '<leader>s/',      function() Snacks.picker.search_history() end,        desc = "Search History" },
@@ -86,38 +93,14 @@ return {
     { "<leader>ss",      function() Snacks.picker.lsp_symbols() end,           desc = "LSP Symbols" },
     { "<leader>sS",      function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
     -- Other
-    { "<leader>z",       function() Snacks.zen() end,                          desc = "Toggle Zen Mode" },
-    { "<leader>Z",       function() Snacks.zen.zoom() end,                     desc = "Toggle Zoom" },
-    { "<leader>.",       function() Snacks.scratch() end,                      desc = "Toggle Scratch Buffer" },
-    { "<leader>S",       function() Snacks.scratch.select() end,               desc = "Select Scratch Buffer" },
     { "<leader>n",       function() Snacks.notifier.show_history() end,        desc = "Notification History" },
     { "<leader>bd",      function() Snacks.bufdelete() end,                    desc = "Delete Buffer" },
     { "<leader>cR",      function() Snacks.rename.rename_file() end,           desc = "Rename File" },
     { "<leader>gB",      function() Snacks.gitbrowse() end,                    desc = "Git Browse",               mode = { "n", "v" } },
     { "<leader>gg",      function() Snacks.lazygit() end,                      desc = "Lazygit" },
     { "<leader>un",      function() Snacks.notifier.hide() end,                desc = "Dismiss All Notifications" },
-    { "<c-/>",           function() Snacks.terminal() end,                     desc = "Toggle Terminal" },
-    { "<c-_>",           function() Snacks.terminal() end,                     desc = "which_key_ignore" },
     { "]]",              function() Snacks.words.jump(vim.v.count1) end,       desc = "Next Reference",           mode = { "n", "t" } },
     { "[[",              function() Snacks.words.jump(-vim.v.count1) end,      desc = "Prev Reference",           mode = { "n", "t" } },
-    {
-      "<leader>N",
-      desc = "Neovim News",
-      function()
-        Snacks.win({
-          file = vim.api.nvim_get_runtime_file("doc/news.txt", false)[1],
-          width = 0.6,
-          height = 0.6,
-          wo = {
-            spell = false,
-            wrap = false,
-            signcolumn = "yes",
-            statuscolumn = " ",
-            conceallevel = 3,
-          },
-        })
-      end,
-    }
   },
   init = function()
     vim.api.nvim_create_autocmd("User", {
