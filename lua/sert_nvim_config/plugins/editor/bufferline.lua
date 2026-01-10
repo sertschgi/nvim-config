@@ -103,6 +103,11 @@ return {
           bg = "#222324"
         },
       },
+
+      buffers = {
+        filter_valid = function(buffer) return buffer.filtype == '' end,
+        new_buffers_position = 'directory',
+      },
     })
   end,
 }
