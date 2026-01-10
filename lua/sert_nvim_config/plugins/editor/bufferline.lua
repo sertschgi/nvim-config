@@ -105,7 +105,7 @@ return {
       },
 
       buffers = {
-        filter_valid = function(buffer) return buffer.filtype == '' end,
+        filter_valid = function(buffer) return buffer.filetype ~= '' end,
         new_buffers_position = 'directory',
       },
     })
